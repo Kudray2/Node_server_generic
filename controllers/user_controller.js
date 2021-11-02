@@ -5,14 +5,27 @@ class UserController {
     try {
       const { email, password } = req.body
       const userData = await userService.register(email, password)
-     
-      res.cookie("refreshToken", userData.refreshToken, {maxAge: 8.64e+8, httpOnly:true})
-      return res.json({id: userData.id, email: userData.email, activated: userData.activated})
 
-    } catch (error) {
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: 8.64e8,
+        httpOnly: true,
+      })
+      return res.json({
+        id: userData.id,
+        email: userData.email,
+        activated: userData.activated,
+      })
+    } catch (error) { 
       res.sendStatus(500)
-      console.error(error) 
+      console.error(error)
     }
+  }
+
+  async activate(req, res, next) {
+    try {
+      const activationLink = req.params.link
+      await userService.activate(activationLink)
+    } catch (error) {}
   }
 
   async login(req, res, next) {
