@@ -1,3 +1,5 @@
+// auth mail send functions
+// npm
 const nodeMailer = require("nodemailer")
 
 class MailService {
@@ -8,7 +10,7 @@ class MailService {
       secure: false,
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASSWORD,
+         pass: process.env.MAIL_PASSWORD,
       },
     })
   }

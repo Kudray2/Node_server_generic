@@ -26,6 +26,7 @@ class TokenService {
     token = await TokenModel.create({ id: userID, refreshToken })
     return token
   }
+
 }
 
 module.exports = new TokenService()
