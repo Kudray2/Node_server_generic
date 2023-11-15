@@ -15,8 +15,10 @@ class UserController {
         email: userData.email,
         activated: userData.activated,
       })
-    } catch (error) { 
-      res.sendStatus(500)
+    } catch (error) {
+      res
+        .send("Intenal server error! May be you are already here")
+        .sendStatus(500)
       console.error(error)
     }
   }
@@ -30,7 +32,15 @@ class UserController {
 
   async login(req, res, next) {
     try {
-    } catch (error) {}
+      const rawPassword = req.body.password
+      const email = req.body.email
+      const checkedUser = await userService.login(email, rawPassword)
+      if (checkedUser) {
+        return res.json(checkedUser).sendStatus(200)
+      }
+    } catch (error) {
+      res.send("No user with such email")
+    }
   }
 
   async logout(req, res, next) {
@@ -39,8 +49,11 @@ class UserController {
   }
   async allUsers(req, res, next) {
     try {
-      res.json([123, 123123123, 234535, "Mike"])
-    } catch (error) {}
+      const collectionToReturn = await userService.allUsers()
+      res.json(collectionToReturn)
+    } catch (error) {
+      res.send("No users in DB").sendStatus(500)
+    }
   }
 }
 

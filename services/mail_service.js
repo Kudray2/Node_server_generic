@@ -11,10 +11,10 @@ class MailService {
       auth: {
         user: process.env.MAIL_USER,
          pass: process.env.MAIL_PASSWORD,
-      },
+      }, 
     })
   }
-  async sendActivationMail(to, link) {
+  async sendActivationUrl(to, activationURL) {
     await this.trasporter.sendMail({
       from: process.env.MAIL_USER,
       to,
@@ -23,7 +23,7 @@ class MailService {
       html: `
         <div>
           <h1>Click link to activate the account</h1>
-          <a href="${link}">${link} </a>
+          <a href="${activationURL}">${activationURL} </a>
         </div>
 
         `,

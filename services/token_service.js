@@ -21,12 +21,11 @@ class TokenService {
     const tokenPayload = await TokenModel.findOne({ id: userID })
     if (tokenPayload) {
       token = refreshToken
+      return token.save()
     }
-
     token = await TokenModel.create({ id: userID, refreshToken })
     return token
   }
-
 }
 
 module.exports = new TokenService()

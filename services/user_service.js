@@ -4,23 +4,28 @@ const { v4 } = require("uuid")
 // declare how many times hash process has to be repeated
 const saltRounds = 2
 const tokenService = require("./token_service")
+const MailService = require('./mail_service')
+
 
 class UserService {
   async register(email, password) {
     try {
       const userToCheck = await UserModel.findOne({ email })
       if (userToCheck) {
-        throw new Error("User with such emai already exist!")
+        throw new InternalError("User with such emai already exist!")
       }
       const hashedPassword = await crypter.hash(password, saltRounds)
       // create user id
       let newUserId = v4()
-      // create and save user
+      const activationURL = v4() 
+      await MailService.activationURL(email, activationURL)
+      // create and save user  in thr DB
       const user = await UserModel.create({
         email,
         password: hashedPassword,
         id: newUserId,
       })
+
       const newUserTokens = tokenService.calculateTokens({
         email: user.email,
         id: user.id,
@@ -41,9 +46,31 @@ class UserService {
     user.activated = true
     await user.save()
   }
-
+ 
   async login(email, rawPassword) {
-    return null
+    try{
+    const userToCheck = await UserModel.findOne({ email })
+    console.log(userToCheck)
+    const hashedPassword = await crypter.compare(
+      rawPassword,
+      userToCheck.password
+    )
+    console.log("pass", hashedPassword)
+    if (hashedPassword) {
+      return userToCheck
+    } else throw new InternalError("PassWord Problem")
+    } catch (error) { 
+      
+    }
+  }
+
+  async allUsers() {
+    try {
+      const collectionToReturn = await UserModel.find({})
+      return collectionToReturn
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 
